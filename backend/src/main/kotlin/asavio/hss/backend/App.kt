@@ -9,15 +9,16 @@ import kotlinx.coroutines.runBlocking
  */
 fun main() = runBlocking {
 
-    val consumer = createKafkaConsumer<String, String> {
-        kafkaConsumerConfig {
-            bootstrapServers = "host1,host2,host3"
-            keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
-            valueDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
-            otherProperties = mapOf(
-                "session.timeout.ms" to "46000",
-                "group.id" to "deep-learning-model"
-            )
+    val consumer =
+        createKafkaConsumer<String, ByteArray> {
+            kafkaConsumerConfig {
+                bootstrapServers = "host1,host2,host3"
+                keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
+                valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+                otherProperties = mapOf(
+                    "session.timeout.ms" to "46000",
+                    "group.id" to "deep-learning-model"
+                )
+            }
         }
-    }
 }
