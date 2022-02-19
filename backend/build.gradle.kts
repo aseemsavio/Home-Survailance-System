@@ -1,6 +1,6 @@
 plugins {
     application
-    id("org.jetbrains.kotlin.jvm") version "1.5.31"
+    id("org.jetbrains.kotlin.jvm") version "1.6.20-M1"
     id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
@@ -17,4 +17,7 @@ application {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.20-M1")
+    implementation("org.apache.kafka:kafka-clients:2.8.0")
 }
