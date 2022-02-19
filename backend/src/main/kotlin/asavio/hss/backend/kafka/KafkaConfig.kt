@@ -1,5 +1,6 @@
-package asavio.hss.backend.config
+package asavio.hss.backend.kafka
 
+import java.util.*
 import kotlin.reflect.full.memberProperties
 
 data class KafkaConsumerConfig(
@@ -10,7 +11,7 @@ data class KafkaConsumerConfig(
 )
 
 fun kafkaConsumerConfig(fn: KafkaConsumerConfigBuilder.() -> Unit) =
-    KafkaConsumerConfigBuilder().apply(fn).build().toMap()
+    KafkaConsumerConfigBuilder().apply(fn).build().toProperties()
 
 class KafkaConsumerConfigBuilder {
 
@@ -32,12 +33,12 @@ class KafkaConsumerConfigBuilder {
     }
 }
 
-fun KafkaConsumerConfig.toMap(): Map<String, String> {
-    val map: MutableMap<String, String> = mutableMapOf()
+fun KafkaConsumerConfig.toProperties(): Properties {
+    val properties = Properties()
     this::class.memberProperties.map {
-        map[it.name.kafkaKey()!!] = it.getter.call(this).toString()
+        properties[it.name.kafkaKey()!!] = it.getter.call(this).toString()
     }
-    return map
+    return properties
 }
 
 /**

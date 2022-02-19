@@ -1,6 +1,6 @@
 package asavio.hss.backend
 
-import asavio.hss.backend.config.kafkaConsumerConfig
+import asavio.hss.backend.kafka.kafkaConsumerConfig
 import asavio.hss.backend.kafka.createKafkaConsumer
 import kotlinx.coroutines.runBlocking
 
