@@ -5,9 +5,10 @@ import kotlin.reflect.full.memberProperties
 
 data class KafkaConsumerConfig(
     val bootstrapServers: String,
-    val groupId: String,
     val keyDeserializer: String,
-    val valueDeserializer: String
+    val valueDeserializer: String,
+    /* Do NOT rename the following property. */
+    val otherProperties: Map<String, String> = emptyMap()
 )
 
 fun kafkaConsumerConfig(fn: KafkaConsumerConfigBuilder.() -> Unit) =
@@ -16,9 +17,9 @@ fun kafkaConsumerConfig(fn: KafkaConsumerConfigBuilder.() -> Unit) =
 class KafkaConsumerConfigBuilder {
 
     var bootstrapServers: String? = null
-    var groupId: String? = null
     var keyDeserializer: String? = null
     var valueDeserializer: String? = null
+    var otherProperties: Map<String, String> = emptyMap()
 
     fun build(): KafkaConsumerConfig {
         check(bootstrapServers != null)
@@ -26,9 +27,9 @@ class KafkaConsumerConfigBuilder {
         check(valueDeserializer != null)
         return KafkaConsumerConfig(
             bootstrapServers = bootstrapServers!!,
-            groupId = groupId!!,
             keyDeserializer = keyDeserializer!!,
-            valueDeserializer = valueDeserializer!!
+            valueDeserializer = valueDeserializer!!,
+            otherProperties = otherProperties
         )
     }
 }
@@ -36,7 +37,19 @@ class KafkaConsumerConfigBuilder {
 fun KafkaConsumerConfig.toProperties(): Properties {
     val properties = Properties()
     this::class.memberProperties.map {
-        properties[it.name.kafkaKey()!!] = it.getter.call(this).toString()
+        when (val key = it.name) {
+            "otherProperties" -> {
+                val map = it.getter.call(this) as Map<*, *>
+                for ((k, v) in map) {
+                    properties[k.toString()] = v.toString()
+                }
+            }
+            else -> {
+                val value = it.getter.call(this)
+                if (value != null) properties[key.kafkaKey()] = value.toString()
+
+            }
+        }
     }
     return properties
 }
