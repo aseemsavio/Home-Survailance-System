@@ -1,5 +1,6 @@
 package asavio.hss.backend.kafka
 
+import java.time.Duration
 import java.util.*
 import kotlin.reflect.full.memberProperties
 
@@ -69,3 +70,5 @@ private fun String.kafkaKey(): String? {
         "."
     ).lowercase()
 }
+
+val Long.duration: Duration get() = Duration.ofMillis(this)

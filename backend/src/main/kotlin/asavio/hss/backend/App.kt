@@ -2,6 +2,7 @@ package asavio.hss.backend
 
 import asavio.hss.backend.kafka.kafkaConsumerConfig
 import asavio.hss.backend.kafka.createKafkaConsumer
+import asavio.hss.backend.kafka.poll
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -21,4 +22,8 @@ fun main() = runBlocking {
                 )
             }
         }
+
+    consumer.poll(listOf("topic-name")) {
+        val value = it.value()
+    }
 }
