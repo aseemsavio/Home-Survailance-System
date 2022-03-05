@@ -36,4 +36,4 @@ fun main() = runBlocking {
 ./bin/kafka-topics.sh --create --topic foobar --partitions 1 --replication-factor 1 --bootstrap-server localhost:9093
 ./bin/kafka-console-producer.sh --topic foobar --bootstrap-server localhost:9093
 ./bin/kafka-console-consumer.sh --topic foobar --from-beginning --bootstrap-server localhost:9093
-        j*/
+        */
