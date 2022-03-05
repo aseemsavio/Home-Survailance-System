@@ -12,12 +12,14 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
 
     val consumer =
-        createKafkaConsumer<String, String> {
+        createKafkaConsumer<String, ByteArray> {
             kafkaConsumerConfig {
                 bootstrapServers = "localhost:9093"
                 keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
-                valueDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
+                valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer"
                 otherProperties = mapOf(
+                    "max.partition.fetch.bytes" to "10000000", /* 10 MB */
+                    "fetch.max.bytes" to "10000000", /* 10 MB */
                     "session.timeout.ms" to "46000",
                     "group.id" to "deep-learning-model"
                 )
@@ -26,7 +28,7 @@ fun main() = runBlocking {
 
     consumer.poll(listOf("foobar")) {
         val value = it.value()
-        info { "Consumed: $value" }
+        info { "Consumed image of size: ${value.size}" }
     }
 }
 /*

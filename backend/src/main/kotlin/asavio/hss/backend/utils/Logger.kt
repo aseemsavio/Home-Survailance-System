@@ -14,7 +14,7 @@ fun info(text: () -> String) {
  */
 fun error(stackTrace: Throwable? = null, text: () -> String) {
     log(ERROR, logEmoji) {
-        stackTrace?.let { "${text()}\n${stackTrace.stackTraceToString()}" } ?: "${text()}"
+        stackTrace?.let { "${text()}\n${stackTrace.stackTraceToString()}" } ?: text()
     }
 }
 
@@ -43,7 +43,7 @@ object WARN : LogType()
 object SUCCESS : LogType()
 object FAILURE : LogType()
 
-val logEmoji = mapOf(
+private val logEmoji = mapOf(
     INFO to "👨🏻‍💻",
     ERROR to "🙅🏻‍",
     WARN to "⚠️",
