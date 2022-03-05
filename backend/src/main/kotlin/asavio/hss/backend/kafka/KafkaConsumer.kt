@@ -1,5 +1,9 @@
 package asavio.hss.backend.kafka
 
+import asavio.hss.backend.utils.info
+import asavio.hss.backend.utils.logError
+import asavio.hss.backend.utils.logFailure
+import asavio.hss.backend.utils.logSuccess
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -30,8 +34,10 @@ suspend fun <K, V> KafkaConsumer<K, V>.poll(
     val currentOffset = HashMap<TopicPartition, OffsetAndMetadata>()
     try {
         subscribe(topics)
-        println("Subscribed to topics: $topics")
+        logSuccess { "Subscribed to topics: $topics." }
         cleanShutDownHook(this)
+        logSuccess { "Clean Shut-down hook registered." }
+        info { "Started polling topics: $topics." }
         while (true) {
             val records = poll(timeOutDuration)
             for (record in records) {
@@ -40,18 +46,22 @@ suspend fun <K, V> KafkaConsumer<K, V>.poll(
             }
         }
     } catch (e: WakeupException) {
-        /* ignore, we're closing */
+        logFailure { "WakeUpException encountered!" }
+        commitSync(currentOffset)
     } catch (e: Exception) {
-        /* do something */
+        logError(e) { "Exception occurred." }
     } finally {
         use {
             commitSync(currentOffset)
+            logSuccess { "Committed current offset: $currentOffset to Kafka manually before shutting down." }
         }
     }
 }
 
 /**
  * Registers a shut-down hook to ensure clean shut down.
+ * This will trigger a [WakeupException], which will be caught.
+ * The finally block will need to manually commit the offset.
  */
 private fun <K, V> cleanShutDownHook(consumer: KafkaConsumer<K, V>) {
     Runtime.getRuntime().addShutdownHook(object : Thread() {

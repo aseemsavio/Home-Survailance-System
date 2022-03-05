@@ -3,6 +3,7 @@ package asavio.hss.backend
 import asavio.hss.backend.kafka.kafkaConsumerConfig
 import asavio.hss.backend.kafka.createKafkaConsumer
 import asavio.hss.backend.kafka.poll
+import asavio.hss.backend.utils.info
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -25,7 +26,7 @@ fun main() = runBlocking {
 
     consumer.poll(listOf("foobar")) {
         val value = it.value()
-        println("Consumed: $value")
+        info { "Consumed: $value" }
     }
 }
 /*
