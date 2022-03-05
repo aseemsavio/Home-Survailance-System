@@ -30,6 +30,7 @@ suspend fun <K, V> KafkaConsumer<K, V>.poll(
     val currentOffset = HashMap<TopicPartition, OffsetAndMetadata>()
     try {
         subscribe(topics)
+        println("Subscribed to topics: $topics")
         cleanShutDownHook(this)
         while (true) {
             val records = poll(timeOutDuration)

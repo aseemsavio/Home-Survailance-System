@@ -11,11 +11,11 @@ import kotlinx.coroutines.runBlocking
 fun main() = runBlocking {
 
     val consumer =
-        createKafkaConsumer<String, ByteArray> {
+        createKafkaConsumer<String, String> {
             kafkaConsumerConfig {
-                bootstrapServers = "host1,host2,host3"
+                bootstrapServers = "localhost:9093"
                 keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
-                valueDeserializer = "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+                valueDeserializer = "org.apache.kafka.common.serialization.StringDeserializer"
                 otherProperties = mapOf(
                     "session.timeout.ms" to "46000",
                     "group.id" to "deep-learning-model"
@@ -23,7 +23,14 @@ fun main() = runBlocking {
             }
         }
 
-    consumer.poll(listOf("topic-name")) {
+    consumer.poll(listOf("foobar")) {
         val value = it.value()
+        println("Consumed: $value")
     }
 }
+/*
+
+./bin/kafka-topics.sh --create --topic foobar --partitions 1 --replication-factor 1 --bootstrap-server localhost:9093
+./bin/kafka-console-producer.sh --topic foobar --bootstrap-server localhost:9093
+./bin/kafka-console-consumer.sh --topic foobar --from-beginning --bootstrap-server localhost:9093
+        j*/
