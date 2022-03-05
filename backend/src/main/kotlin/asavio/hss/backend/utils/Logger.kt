@@ -12,7 +12,7 @@ fun info(text: () -> String) {
 /**
  * Writes an error log
  */
-fun logError(stackTrace: Throwable? = null, text: () -> String) {
+fun error(stackTrace: Throwable? = null, text: () -> String) {
     log(ERROR, logEmoji) {
         stackTrace?.let { "${text()}\n${stackTrace.stackTraceToString()}" } ?: "${text()}"
     }
@@ -21,14 +21,14 @@ fun logError(stackTrace: Throwable? = null, text: () -> String) {
 /**
  * Writes a SUCCESS log
  */
-fun logSuccess(text: () -> String) {
+fun success(text: () -> String) {
     log(SUCCESS, logEmoji, text)
 }
 
 /**
  * Writes a FAILURE log
  */
-fun logFailure(text: () -> String) {
+fun failure(text: () -> String) {
     log(FAILURE, logEmoji, text)
 }
 

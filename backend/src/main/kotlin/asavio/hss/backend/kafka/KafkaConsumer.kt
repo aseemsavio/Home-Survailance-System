@@ -1,9 +1,9 @@
 package asavio.hss.backend.kafka
 
 import asavio.hss.backend.utils.info
-import asavio.hss.backend.utils.logError
-import asavio.hss.backend.utils.logFailure
-import asavio.hss.backend.utils.logSuccess
+import asavio.hss.backend.utils.error
+import asavio.hss.backend.utils.failure
+import asavio.hss.backend.utils.success
 import kotlinx.coroutines.runBlocking
 import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -34,9 +34,9 @@ suspend fun <K, V> KafkaConsumer<K, V>.poll(
     val currentOffset = HashMap<TopicPartition, OffsetAndMetadata>()
     try {
         subscribe(topics)
-        logSuccess { "Subscribed to topics: $topics." }
+        success { "Subscribed to topics: $topics." }
         cleanShutDownHook(this)
-        logSuccess { "Clean Shut-down hook registered." }
+        success { "Clean Shut-down hook registered." }
         info { "Started polling topics: $topics." }
         while (true) {
             val records = poll(timeOutDuration)
@@ -46,14 +46,14 @@ suspend fun <K, V> KafkaConsumer<K, V>.poll(
             }
         }
     } catch (e: WakeupException) {
-        logFailure { "WakeUpException encountered!" }
+        failure { "WakeUpException encountered!" }
         commitSync(currentOffset)
     } catch (e: Exception) {
-        logError(e) { "Exception occurred." }
+        error(e) { "Exception occurred." }
     } finally {
         use {
             commitSync(currentOffset)
-            logSuccess { "Committed current offset: $currentOffset to Kafka manually before shutting down." }
+            success { "Committed current offset: $currentOffset to Kafka manually before shutting down." }
         }
     }
 }
