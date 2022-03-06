@@ -72,3 +72,4 @@ private fun String.kafkaKey(): String? {
 }
 
 val Long.duration: Duration get() = Duration.ofMillis(this)
+

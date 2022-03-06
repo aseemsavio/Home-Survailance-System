@@ -3,13 +3,15 @@ package asavio.hss.backend
 import asavio.hss.backend.kafka.kafkaConsumerConfig
 import asavio.hss.backend.kafka.createKafkaConsumer
 import asavio.hss.backend.kafka.poll
+import asavio.hss.backend.utils.coroutineName
 import asavio.hss.backend.utils.info
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 /**
  * Entry Point of the Surveillance Backend
  */
-fun main() = runBlocking {
+suspend fun main() = coroutineScope {
 
     val consumer =
         createKafkaConsumer<String, ByteArray> {
@@ -27,8 +29,12 @@ fun main() = runBlocking {
         }
 
     consumer.poll(listOf("foobar")) {
-        val value = it.value()
-        info { "Consumed image of size: ${value.size}" }
+        coroutineScope {
+            launch("processing-coroutine".coroutineName) {
+                val value = it.value()
+                info { "Consumed image of size: ${value.size}" }
+            }
+        }
     }
 }
 /*
